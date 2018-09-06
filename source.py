@@ -13,8 +13,8 @@ import sklearn.linear_model as lin
 
 def mymult(A, B):
 
-  I, K = np.shape(A)
-  K, J = np.shape(B)
+  I,K = np.shape(A)
+  K,J = np.shape(B)
   C = np.zeros([I, J])
 
   for i in range(I):
@@ -30,9 +30,9 @@ def mymult(A, B):
   return C
         
     
-# 1 b)
+# 1 b) 
 
-def mymeasure(I, K, J):
+def mymeasure(I, J, K):
 
   A = np.random.rand(I, K)
   B = np.random.rand(K, J)
@@ -40,7 +40,7 @@ def mymeasure(I, K, J):
   C1 = np.matmul(A, B)
   t2 = time.time()
   print('')
-  print('Execution time for numpy.matmul ({}, {}, {}: {}'.format(I, J, K, t2 - t1))
+  print('Execution time for numpy.matmul ({}, {}, {}): {}'.format(I, J, K, t2 - t1))
   t1 = time.time()
   C2 = mymult(A, B)
   t2 = time.time()
@@ -61,14 +61,15 @@ mymeasure(1000, 1000, 1000)
 # Question 3
 
 with open('data1.pickle','rb') as f:
-    dataTrain, dataTest = pickle.load(f)
+    dataTrain,dataTest = pickle.load(f)
     
-Xtrain = dataTrain[:, 0]
-Ytrain = dataTrain[:, 1]
-Xtest = dataTest[:, 0]
-YTest = dataTest[:, 1]
+Xtrain = dataTrain[:,0]
+Ytrain = dataTrain[:,1]
+Xtest = dataTest[:,0]
+Ytest = dataTest[:,1]
 Ntrain = len(Ytrain)
-Ntest = len(YTest)
+Ntest = len(Ytest)
+
 yMax = 15.0
 yMin = -15.0
 xMin = 0.0
@@ -77,14 +78,14 @@ xMax = 1.0
  
 # 3 a)
 
-def dataMatrix(X, M):
+def dataMatrix(x, M):
 
   x = np.reshape(x, [-1])
   N = len(x)
   Z = np.ones([N, M + 1])
 
   for n in range(1, M + 1):
-    Z[:, n] = Z[:, n - 1] * x
+    Z[:,n] = Z[:, n - 1] * x
 
   return Z
 
@@ -100,7 +101,7 @@ def fitPoly(M):
   errTrain = error(Ytrain, Ztrain, w)
   Ztest = dataMatrix(Xtest, M)
   errTest = error(Ytest, Ztest, w)
-  eturn (w, errTrain, errTest)
+  return (w, errTrain, errTest)
     
     
 # 3 c)
@@ -179,7 +180,7 @@ Yval = dataVal[:, 1]
 Xtest = dataTest[:, 0]
 Ytest = dataTest[:, 1]
 Nval = len(Yval)
-Ntest = len(YTest)
+Ntest = len(Ytest)
 
  
 # 4 a)       
@@ -200,10 +201,10 @@ def fitRegPoly(M,alpha):
 def bestRegPoly():
 
   M = 15
-  errTestList = []
+  errTrainList = []
   errValList = []
   errValMin = np.Inf
-  alphaList = 10.0 ** np.arrage(-13, 3)
+  alphaList = 10.0 ** np.arange(-13, 3)
   plt.figure()
   plt.suptitle('Question 4(b): best-fitting polynomials for log(alpha) = -13, -12, ... , 1, 2')
 
@@ -223,11 +224,11 @@ def bestRegPoly():
   plt.figure()
   plt.semilogx(alphaList, errTrainList, 'b')
   plt.semilogx(alphaList, errValList, 'r')
-  plt.title('Question 4: best-fitting polynomials (alpha = {})'.format(alphaList(I)))
+  plt.title('Question 4: best-fitting polynomials (alpha = {})'.format(alphaList[I]))
   plt.xlabel('x')
   plt.ylabel('y')
   print('')
-  print('Optimal value of alpha: {}'.format(alphaList(I)))
+  print('Optimal value of alpha: {}'.format(alphaList[I]))
   print('')
   print('Weight vector of best-fitting polynomials: ')
   print(w_best)
@@ -266,7 +267,7 @@ def regGrad(Z, t, w, alpha):
     
 # 5 d)
     
-def fitPolyGrad(m,alpha,lrate):
+def fitPolyGrad(M,alpha,lrate):
   w = rnd.randn(M + 1)
   Ztrain = dataMatrix(Xtrain, M)
   errTrainList = []
@@ -282,10 +283,10 @@ def fitPolyGrad(m,alpha,lrate):
 
     if np.mod(i, 1000) == 0:
       yhat = np.matmul(Ztrain, w)
-      errTrain = np.sum((Ytrain - yhat) ** 2)/Ntrain
+      errTrain = np.sum((Ytrain - yhat)**2)/Ntrain
       errTrainList.append(errTrain)
-      yhat = np.matmul(Ztest, w)
-      errTest = np.sum((Ytest - yhat) ** 2)/Ntest
+      yhat = np.matmul(Ztrain, w)
+      errTest = np.sum((Ytest - yhat)**2)/Ntest
       errTestList.append(errTest)
 
     if i == iList[j]:
